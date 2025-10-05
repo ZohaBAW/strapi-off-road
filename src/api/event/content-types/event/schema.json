@@ -15,8 +15,8 @@
       "type": "string"
     },
     "Date": {
-      "type": "datetime"
-    },
+      "type": "date"
+    }
     "Location": {
       "type": "string"
     }
