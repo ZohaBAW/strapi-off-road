@@ -1,0 +1,57 @@
+import type { Context } from 'koa'; // Keep this import for the Koa context
+
+export default (plugin: any) => { // Use 'any' to bypass strict type checking for the plugin object
+  const originalRegister = plugin.controllers.auth.register;
+
+  plugin.controllers.auth.register = async (ctx: Context) => {
+    const { email, username, password, Driving } = ctx.request.body as any;
+
+    if (!Driving) {
+      return ctx.badRequest('Driving is required.');
+    }
+
+    try {
+      // Execute the original registration logic first.
+      await originalRegister(ctx);
+
+      // Fetch the newly created user using the entity service
+      const users = await strapi.entityService.findMany(
+        'plugin::users-permissions.user',
+        {
+          filters: { email: email.toLowerCase() },
+        }
+      );
+
+      if (users && users.length > 0) {
+        const newUser = users[0];
+
+        // Update the new user with the custom field
+        await strapi.entityService.update(
+          'plugin::users-permissions.user',
+          newUser.id,
+          {
+            data: {
+              Driving,
+            },
+          }
+        );
+
+        // Customize the response body
+        ctx.body = {
+          message: 'Congrats ${newUser.username}! Your account has been registered successfully.',
+          user: {
+            ...newUser,
+            Driving,
+          },
+        };
+      } else {
+        ctx.badImplementation('Failed to create user during registration.');
+      }
+    } catch (error) {
+      strapi.log.error(error);
+      ctx.badImplementation(error.message);
+    }
+  };
+
+  return plugin;
+};

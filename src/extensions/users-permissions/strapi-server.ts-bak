@@ -1,0 +1,151 @@
+import type { Context } from "koa";
+
+type AnyObj = Record<string, any>;
+
+// Helper: coerce "true"/"false" (string) to boolean
+const toBool = (v: any) =>
+  typeof v === "boolean" ? v : typeof v === "string" ? v.toLowerCase() === "true" : Boolean(v);
+
+// Only include keys that are present (not undefined/null)
+const pickDefined = (obj: AnyObj, keys: string[]) =>
+  keys.reduce<AnyObj>((acc, k) => {
+    const v = obj[k];
+    if (v !== undefined && v !== null && v !== "") acc[k] = v;
+    return acc;
+  }, {});
+
+// --- Field lists (match your frontend keys exactly) ---
+const REQUIRED_FIELDS = [
+  "DOB",
+  "EmiratesID",
+  "Nationality",
+  "MobileNo",
+  "LicenseExpiry",
+  "City",
+  "DriverLicenseNo",
+  "OffRoadLevel",
+  "VehicalMakeModel",
+  "Year",
+  "Color",
+  "Mods",
+  "PlateNo",
+  "EmergencyContactName",
+  "EmergencyContactNo",
+  "Relationship",
+  "RecoveryGear",
+  "FireExt",
+  "FirstAidKit",
+  "Flag",
+  "Radio",
+  "RecoveryRope",
+  "AirCompressor",
+  "SpareTire",
+] as const;
+
+const BOOLEAN_FIELDS = [
+  "RecoveryGear",
+  "FireExt",
+  "FirstAidKit",
+  "Flag",
+  "Radio",
+  "RecoveryRope",
+  "AirCompressor",
+  "SpareTire",
+] as const;
+
+const ALL_CUSTOM_FIELDS = [
+  ...REQUIRED_FIELDS,
+  // keep any optional extras here if you add later:
+  // "Medical",
+  // legacy/compat (if your previous code sent this):
+//  "Driving",
+] as const;
+
+export default (plugin: any) => {
+  const originalRegister = plugin.controllers.auth.register;
+
+  plugin.controllers.auth.register = async (ctx: Context) => {
+    const body = (ctx.request.body || {}) as AnyObj;
+
+    // Extract core auth fields (Strapi expects these)
+    const { email, username, password } = body;
+
+    // Basic guard: Strapi will validate too, but fail early if totally missing
+    if (!email || !username || !password) {
+      return ctx.badRequest("email, username and password are required.");
+    }
+
+    // Validate required custom fields
+    const missing: string[] = [];
+    for (const f of REQUIRED_FIELDS) {
+      const v = body[f];
+      // treat empty string as missing
+      if (v === undefined || v === null || ${v}.trim() === "") {
+        missing.push(f as string);
+      }
+    }
+    if (missing.length) {
+      return ctx.badRequest(
+        Missing required field${missing.length > 1 ? "s" : ""}: ${missing.join(", ")}
+      );
+    }
+
+    // Coerce booleans
+    for (const f of BOOLEAN_FIELDS) {
+      if (f in body) body[f] = toBool(body[f]);
+    }
+
+    // Let the core register logic run (creates the user and sets ctx.response.body)
+    await originalRegister(ctx);
+
+    // The created user is available on ctx.response.body.user
+    const createdUser = (ctx.response?.body as AnyObj)?.user;
+
+    if (!createdUser?.id) {
+      // Fallback: find by email if for some reason not present
+      const users = await strapi.entityService.findMany(
+        "plugin::users-permissions.user",
+        { filters: { email: (email as string).toLowerCase() }, limit: 1 }
+      );
+      if (!users?.length) {
+        return ctx.badImplementation("Failed to locate newly created user after registration.");
+      }
+      createdUser.id = users[0].id;
+    }
+
+    // Prepare only the custom fields to update
+    const updateData = pickDefined(body, ALL_CUSTOM_FIELDS as unknown as string[]);
+
+    // Also normalize simple types where useful
+    if ("Year" in updateData) {
+      const yrNum = Number(updateData.Year);
+      if (!Number.isNaN(yrNum)) updateData.Year = yrNum;
+    }
+
+    // Persist custom fields on the user
+    await strapi.entityService.update(
+      "plugin::users-permissions.user",
+      createdUser.id,
+      { data: updateData }
+    );
+
+    // Build a clean response (keep Strapi’s jwt if present)
+    const original = (ctx.response?.body || {}) as AnyObj;
+    const jwt = original.jwt;
+
+    // Re-fetch sanitized user to include saved fields
+    const finalUser = await strapi.entityService.findOne(
+      "plugin::users-permissions.user",
+      createdUser.id,
+      { fields: ["id", "username", "email", ...ALL_CUSTOM_FIELDS] }
+    );
+
+    ctx.body = {
+      message: Congrats ${finalUser.username}! Your account has been registered successfully.,
+      jwt, // keep the token so your frontend can log the user in right away
+      user: finalUser,
+    };
+  };
+
+  return plugin;
+};

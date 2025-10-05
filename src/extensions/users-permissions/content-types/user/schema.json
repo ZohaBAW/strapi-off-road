@@ -1,0 +1,173 @@
+{
+  "kind": "collectionType",
+  "collectionName": "up_users",
+  "info": {
+    "name": "user",
+    "description": "",
+    "singularName": "user",
+    "pluralName": "users",
+    "displayName": "User"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "username": {
+      "type": "string",
+      "minLength": 3,
+      "unique": true,
+      "configurable": false,
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "minLength": 6,
+      "configurable": false,
+      "required": true
+    },
+    "provider": {
+      "type": "string",
+      "configurable": false
+    },
+    "password": {
+      "type": "password",
+      "minLength": 6,
+      "configurable": false,
+      "private": true,
+      "searchable": false
+    },
+    "resetPasswordToken": {
+      "type": "string",
+      "configurable": false,
+      "private": true,
+      "searchable": false
+    },
+    "confirmationToken": {
+      "type": "string",
+      "configurable": false,
+      "private": true,
+      "searchable": false
+    },
+    "confirmed": {
+      "type": "boolean",
+      "default": false,
+      "configurable": false
+    },
+    "blocked": {
+      "type": "boolean",
+      "default": false,
+      "configurable": false
+    },
+    "role": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.role",
+      "inversedBy": "users",
+      "configurable": false
+    },
+    "DOB": {
+      "type": "date",
+      "required": true
+    },
+    "EmiratesID": {
+      "type": "biginteger",
+      "required": true,
+      "unique": false,
+      "min": "15",
+      "max": "15"
+    },
+    "Nationality": {
+      "type": "string",
+      "required": true
+    },
+    "MobileNo": {
+      "type": "biginteger",
+      "required": true
+    },
+    "LicenseExpiry": {
+      "type": "date",
+      "required": true
+    },
+    "City": {
+      "type": "string",
+      "required": true
+    },
+    "DriverLicenseNo": {
+      "type": "string",
+      "required": true
+    },
+    "OffRoadLevel": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "Beginner",
+        "Intermediate",
+        "Expert"
+      ]
+    },
+    "VehicalMakeModel": {
+      "type": "string",
+      "required": true
+    },
+    "Year": {
+      "type": "integer",
+      "required": true
+    },
+    "Color": {
+      "type": "string",
+      "required": true
+    },
+    "Mods": {
+      "type": "string",
+      "required": true
+    },
+    "PlateNo": {
+      "type": "string",
+      "required": true
+    },
+    "EmergencyContactName": {
+      "type": "string",
+      "required": true
+    },
+    "EmergencyContactNo": {
+      "type": "biginteger",
+      "required": true
+    },
+    "Relationship": {
+      "type": "string",
+      "required": true
+    },
+    "RecoveryGear": {
+      "type": "boolean",
+      "required": true
+    },
+    "FireExt": {
+      "type": "boolean",
+      "required": true
+    },
+    "FirstAidKit": {
+      "type": "boolean",
+      "required": true
+    },
+    "Flag": {
+      "type": "boolean",
+      "required": true
+    },
+    "Radio": {
+      "type": "boolean",
+      "required": true
+    },
+    "RecoveryRope": {
+      "type": "boolean",
+      "required": true
+    },
+    "AirCompressor": {
+      "type": "boolean",
+      "required": true
+    },
+    "SpareTire": {
+      "type": "boolean"
+    }
+  }
+}

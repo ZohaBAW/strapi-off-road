@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "booked_users",
+  "info": {
+    "singularName": "booked-user",
+    "pluralName": "booked-users",
+    "displayName": "bookedUser"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Email": {
+      "type": "email",
+      "required": true
+    },
+    "EventDetails": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    }
+  }
+}
