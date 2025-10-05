@@ -7,13 +7,13 @@ export default () => ({
         port: 465,
         secure: true,
         auth: {
-          user: "fawascm303@gmail.com",
-          pass: "nbrn vckr eiyv axqz",
+          user: "",
+          pass: "",
         },
       },
       settings: {
-        defaultFrom: "fawascm303@gmail.com",
-        defaultReplyTo: "fawascm303@gmail.com",
+        defaultFrom: "",
+        defaultReplyTo: "",
       },
     },
   },
