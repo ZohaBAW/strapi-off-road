@@ -716,55 +716,35 @@ export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
   };
 }
 
-export interface ApiRegistrationRegistration
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'registrations';
+export interface ApiTestimonialTestimonial extends Struct.CollectionTypeSchema {
+  collectionName: 'testimonials';
   info: {
-    displayName: 'Registration';
-    pluralName: 'registrations';
-    singularName: 'registration';
+    displayName: 'TESTIMONIAL';
+    pluralName: 'testimonials';
+    singularName: 'testimonial';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    AirCompressor: Schema.Attribute.Boolean & Schema.Attribute.Required;
-    City: Schema.Attribute.String & Schema.Attribute.Required;
-    Color: Schema.Attribute.String & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    DOB: Schema.Attribute.Date & Schema.Attribute.Required;
-    EmergencyContactName: Schema.Attribute.String & Schema.Attribute.Required;
-    EmergencyContactNo: Schema.Attribute.BigInteger & Schema.Attribute.Required;
-    FireExt: Schema.Attribute.Boolean & Schema.Attribute.Required;
-    FirstAidKit: Schema.Attribute.Boolean & Schema.Attribute.Required;
-    Flag: Schema.Attribute.Boolean & Schema.Attribute.Required;
+    Description: Schema.Attribute.String & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
-      'api::registration.registration'
+      'api::testimonial.testimonial'
     > &
       Schema.Attribute.Private;
-    MobileNo: Schema.Attribute.BigInteger & Schema.Attribute.Required;
-    Mods: Schema.Attribute.String & Schema.Attribute.Required;
-    Nationality: Schema.Attribute.String & Schema.Attribute.Required;
-    OffRoadLevel: Schema.Attribute.Enumeration<
-      ['Beginner', 'Intermediate', 'Expert']
-    > &
+    Name: Schema.Attribute.String & Schema.Attribute.Required;
+    Photo: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'> &
       Schema.Attribute.Required;
-    PlateNo: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    Radio: Schema.Attribute.Boolean & Schema.Attribute.Required;
-    RecoveryGear: Schema.Attribute.Boolean & Schema.Attribute.Required;
-    RecoveryRope: Schema.Attribute.Boolean & Schema.Attribute.Required;
-    Relationship: Schema.Attribute.String & Schema.Attribute.Required;
-    SpareTire: Schema.Attribute.Boolean;
+    Review: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    VehicalMakeModel: Schema.Attribute.String & Schema.Attribute.Required;
-    Year: Schema.Attribute.Integer & Schema.Attribute.Required;
   };
 }
 
@@ -1321,7 +1301,7 @@ declare module '@strapi/strapi' {
       'api::event.event': ApiEventEvent;
       'api::gallery.gallery': ApiGalleryGallery;
       'api::global.global': ApiGlobalGlobal;
-      'api::registration.registration': ApiRegistrationRegistration;
+      'api::testimonial.testimonial': ApiTestimonialTestimonial;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
