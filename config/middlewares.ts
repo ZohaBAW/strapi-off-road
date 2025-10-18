@@ -3,7 +3,7 @@ module.exports = [
   {
     name: 'strapi::cors',
     config: {
-      origin: ['http://localhost:5175', 'https://off-road-777f7.web.app'],
+      origin: ['http://localhost:5175', 'https://off-road-777f7.web.app' 'https://offroadadda.com'],
       methods: ['GET','POST','PUT','PATCH','DELETE','HEAD','OPTIONS'],
       headers: ['Content-Type','Authorization','Origin','Accept'],
       credentials: true,
